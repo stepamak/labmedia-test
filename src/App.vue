@@ -1,11 +1,11 @@
 <template>
   <div id="app">
       <h1>Список пользователей</h1>
-      <SearchSort @update-search="updateSearch" @sort-by="sortUsers" />
+      <SearchSort @update-search="updateSearchQuery"/>
       <UserTable 
           :users="filteredUsers" 
-          @delete-user="removeUser" 
-          :searchQuery="searchQuery" 
+          @delete-user="removeUser"
+          :searchQuery="searchQuery"
       />
   </div>
 </template>
@@ -27,13 +27,12 @@ export default {
   },
   computed: {
       filteredUsers() {
-          return this.users.filter(user => {
-              const query = this.searchQuery.toLowerCase();
-              return (
-                  user.username.toLowerCase().includes(query) ||
-                  user.email.toLowerCase().includes(query)
-              );
-          });
+          if (!this.searchQuery) return this.users;
+          const query = this.searchQuery.toLowerCase();
+          return this.users.filter(user => 
+              user.username.toLowerCase().includes(query) ||
+              user.email.toLowerCase().includes(query)
+          );
       },
   },
   methods: {
@@ -45,18 +44,11 @@ export default {
               console.error("Ошибка при загрузке пользователей:", error);
           }
       },
-      updateSearch(query) {
-          this.searchQuery = query;
-      },
-      sortUsers(field) {
-          if (field === 'registrationDate') {
-              this.users.sort((a, b) => new Date(b.registration_date) - new Date(a.registration_date));
-          } else if (field === 'rating') {
-              this.users.sort((a, b) => b.rating - a.rating);
-          }
-      },
       removeUser(userId) {
           this.users = this.users.filter(user => user.id !== userId);
+      },
+      updateSearchQuery(query) {
+          this.searchQuery = query;
       },
   },
   mounted() {

@@ -1,7 +1,7 @@
 <template>
      <div class="sort-options">
         <span>Сортировка:</span>
-        <button @click="sortBy('registrationDate')" class="sort-button">Дата регистрации</button>
+        <button @click="sortBy('registration_date')" class="sort-button">Дата регистрации</button>
         <button @click="sortBy('rating')"  class="sort-button">Рейтинг</button>
     </div>
     <div class="user-table-container">
@@ -21,7 +21,9 @@
             <td>{{ formatDate(user.registration_date) }}</td>
             <td>{{ user.rating }}</td>
             <td>
-              <button class="delete-button button-delete" @click="openDeleteModal(user.id)">
+              <button 
+                class="delete-button button-delete" 
+                @click="openDeleteModal(user.id)">
                 <img :src="deleteIcon" alt="Delete" class="button-image" />
               </button>
             </td>
@@ -63,6 +65,8 @@
         usersPerPage: 5,
         userIdToDelete: null,
         showDeleteModal: false,
+        currentSortField: null, 
+        currentSortOrder: 'asc', 
       };
     },
     computed: {
@@ -75,13 +79,13 @@
       },
       filteredUsers() {
         return this.users.filter(user => {
-          const query = this.searchQuery.toLowerCase();
-          return (
-            user.username.toLowerCase().includes(query) ||
-            user.email.toLowerCase().includes(query)
-          );
+            const query = this.searchQuery.toLowerCase();
+            return (
+                user.username.toLowerCase().includes(query) ||
+                user.email.toLowerCase().includes(query)
+            );
         });
-      },
+      }
     },
     methods: {
       formatDate(dateString) {
@@ -95,7 +99,7 @@
       },
       confirmDelete(userId) {
         this.$emit('delete-user', userId);
-        this.userIdToDelete = null; // Сброс ID после удаления
+        this.userIdToDelete = null; 
         this.closeDeleteModal();
     },
       closeDeleteModal() {
@@ -110,6 +114,24 @@
         if (this.currentPage > 1) {
           this.currentPage--;
         }
+      },
+      sortBy(field) {
+        if (this.currentSortField === field) {
+            this.currentSortOrder = this.currentSortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.currentSortField = field;
+            this.currentSortOrder = 'asc';
+        }
+
+        this.users.sort((a, b) => {
+            let comparison = 0;
+            if (field === 'registration_date') {
+                comparison = new Date(a.registration_date) - new Date(b.registration_date);
+            } else {
+                comparison = a[field] > b[field] ? 1 : -1;
+            }
+            return this.currentSortOrder === 'asc' ? comparison : -comparison;
+        });
       },
     },
   };
@@ -182,7 +204,7 @@
     cursor: pointer;
   }
   .sort-options {
-    padding-top: 20px;
+    padding-top: 70px;
     padding-bottom: 10px;
   }
   .sort-button {

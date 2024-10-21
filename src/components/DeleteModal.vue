@@ -65,7 +65,7 @@ export default {
 
 .modal-button-reject {
   width: 30%;
-  background-color: #0cb4f1; /* Цвет для кнопки отмены */
+  background-color: #0cb4f1;
   border-radius: 10px;
   border: none;
   padding: 10px 20px;
