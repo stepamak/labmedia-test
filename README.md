@@ -9,9 +9,9 @@
    cd labmedia-test
 
 2. Установите зависимости:
-
+    ```bash
     npm install
 
 3. Запустите приложение:
-
+    ```bash
     npm run dev
